@@ -9,7 +9,7 @@ import (
 type List struct {
 	chain []*node
 	head  int
-	trail int
+	tail  int
 	exist map[unsafe.Pointer]struct{}
 }
 
@@ -40,9 +40,9 @@ func (this *List) Head() (n *node, pos int) {
 	return this.chain[this.head], this.head
 }
 
-func (this *List) Trail() (n *node, pos int) {
+func (this *List) Tail() (n *node, pos int) {
 	panicIfNil(this)
-	return this.chain[this.trail], this.trail
+	return this.chain[this.tail], this.tail
 }
 
 func (this *List) IsEmpty() bool {
@@ -57,7 +57,7 @@ func (this *List) IsFull() bool {
 
 func (this *List) pushIfEmpty(n *node) {
 	this.head = 0
-	this.trail = 0
+	this.tail = 0
 	this.chain[0] = n
 	this.chain[0].index = -1
 	this.exist[unsafe.Pointer(n)] = struct{}{}
@@ -89,8 +89,8 @@ func (this *List) pushAfterPos(nodePos, insertPos int) {
 	this.chain[nodePos].index = this.chain[insertPos].index
 	this.chain[insertPos].index = nodePos
 
-	if insertPos == this.trail {
-		this.trail = nodePos
+	if insertPos == this.tail {
+		this.tail = nodePos
 	}
 }
 
@@ -166,7 +166,7 @@ func (this *List) pushIfFull(n *node, insertPos int) (head, next int) {
 	this.chain = newChain
 	this.exist[unsafe.Pointer(n)] = struct{}{}
 	this.head = 0
-	this.trail = cnt - 1
+	this.tail = cnt - 1
 
 	return 0, cnt
 }
@@ -175,14 +175,14 @@ func (this *List) searchNodeOfNil() (find bool, pos int) {
 	if this.IsFull() {
 		return false, -1
 	}
-	for pos = this.trail; pos < len(this.chain); pos++ {
+	for pos = this.tail; pos < len(this.chain); pos++ {
 		if this.chain[pos] == nil {
 			find = true
 			break
 		}
 	}
 	if !find {
-		for pos = 0; pos < this.trail; pos++ {
+		for pos = 0; pos < this.tail; pos++ {
 			if this.chain[pos] == nil {
 				find = true
 				break
@@ -195,7 +195,7 @@ func (this *List) searchNodeOfNil() (find bool, pos int) {
 	return find, pos
 }
 
-func (this *List) PushTrail(n *node) error {
+func (this *List) PushTail(n *node) error {
 	panicIfNil(this)
 	if this.IsExist(n) {
 		return errors.New("the pt to the node is exist already!")
@@ -205,14 +205,14 @@ func (this *List) PushTrail(n *node) error {
 		return nil
 	}
 	if this.IsFull() {
-		this.pushIfFull(n, this.trail)
+		this.pushIfFull(n, this.tail)
 		return nil
 	}
 
 	defer func() {
 		if r := recover(); r != nil {
 			log.Println(r)
-			this.pushIfFull(n, this.trail)
+			this.pushIfFull(n, this.tail)
 		}
 	}()
 
@@ -223,14 +223,14 @@ func (this *List) PushTrail(n *node) error {
 	this.chain[next] = n
 	this.exist[unsafe.Pointer(n)] = struct{}{}
 
-	this.pushAfterPos(next, this.trail)
+	this.pushAfterPos(next, this.tail)
 	return nil
 }
 
 func (this *List) PushHead(n *node) {
 	panicIfNil(this)
 	if this.IsEmpty() {
-		this.PushTrail(n)
+		this.PushTail(n)
 		return
 	}
 
@@ -274,18 +274,18 @@ func (this *List) PopHead() (n *node, pos int, err error) {
 	return n, pos, nil
 }
 
-func (this *List) PopTrail() (n *node, pos int, err error) {
+func (this *List) PopTail() (n *node, pos int, err error) {
 	panicIfNil(this)
 	if this.IsEmpty() {
 		return nil, -1, errors.New("the list is empty")
 	}
-	n = this.chain[this.trail]
-	pos = this.trail
+	n = this.chain[this.tail]
+	pos = this.tail
 
-	this.chain[this.trail] = nil
+	this.chain[this.tail] = nil
 	delete(this.exist, unsafe.Pointer(n))
 
-	this.trail = this.getBeforePos(this.trail)
+	this.tail = this.getBeforePos(this.tail)
 
 	return n, pos, nil
 }

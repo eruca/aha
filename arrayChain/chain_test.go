@@ -19,11 +19,11 @@ func TestNewList(t *testing.T) {
 	}
 }
 
-func TestHeadTrail(t *testing.T) {
+func TestHeadTail(t *testing.T) {
 	list := NewList(10)
 	list.PushHead(NewNode(0))
 	h, hpos := list.Head()
-	tr, tpos := list.Trail()
+	tr, tpos := list.Tail()
 	if h != tr || hpos != tpos {
 		t.Error("head equal,but not")
 	}
@@ -50,10 +50,10 @@ func TestpushIfEmpty(t *testing.T) {
 
 func TestPos(t *testing.T) {
 	list := NewList(10)
-	list.PushTrail(NewNode(0))
-	list.PushTrail(NewNode(1))
-	list.PushTrail(NewNode(2))
-	list.PushTrail(NewNode(3))
+	list.PushTail(NewNode(0))
+	list.PushTail(NewNode(1))
+	list.PushTail(NewNode(2))
+	list.PushTail(NewNode(3))
 	if list.Len() != 4 {
 		expect(t, 4, list.Len())
 	}
@@ -66,19 +66,19 @@ func TestPos(t *testing.T) {
 		expect(t, -1, list.chain[3].index)
 	}
 
-	if list.getBeforePos(list.head) != -1 || list.getBeforePos(list.trail) != 2 {
+	if list.getBeforePos(list.head) != -1 || list.getBeforePos(list.tail) != 2 {
 		t.Error("true,but false")
 	}
 }
 
 func TestPos2(t *testing.T) {
 	list := NewList(5)
-	list.PushTrail(NewNode(0))
-	list.PushTrail(NewNode(1))
-	list.PushTrail(NewNode(2))
-	list.PushTrail(NewNode(3))
-	list.PushTrail(NewNode(4))
-	list.PushTrail(NewNode(5))
+	list.PushTail(NewNode(0))
+	list.PushTail(NewNode(1))
+	list.PushTail(NewNode(2))
+	list.PushTail(NewNode(3))
+	list.PushTail(NewNode(4))
+	list.PushTail(NewNode(5))
 	if list.Cap() != 10 {
 		t.Error("10,but", list.Cap())
 	}
@@ -89,7 +89,7 @@ func TestPos2(t *testing.T) {
 	}
 
 	list.PopHead()
-	list.PopTrail()
+	list.PopTail()
 	expect(t, 3, list.Len())
 	list.PushHead(n)
 	expect(t, 4, list.Len())
@@ -100,15 +100,15 @@ func TestPos2(t *testing.T) {
 
 func TestPos3(t *testing.T) {
 	list := NewList(5)
-	list.PushTrail(NewNode(0))
-	list.PushTrail(NewNode(1))
-	list.PushTrail(NewNode(2))
+	list.PushTail(NewNode(0))
+	list.PushTail(NewNode(1))
+	list.PushTail(NewNode(2))
 	list.PushHead(NewNode(-1))
 	list.PushAfterPos(NewNode(3), 3)
 	list.PopHead()
-	list.PopTrail()
-	list.PopTrail()
-	list.PopTrail()
+	list.PopTail()
+	list.PopTail()
+	list.PopTail()
 	list.PopHead()
 	if list.Len() != 0 {
 		t.Error("0,but", list.Len())
